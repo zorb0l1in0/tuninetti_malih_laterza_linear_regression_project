@@ -74,7 +74,7 @@ class DataPreprocessor:
         num_cols = df.select_dtypes(include=np.number).columns
         for col in num_cols:
             if col != self.target:
-                df[col] = winsorize(df[col], limits=[0, 0.1])
+                df[col] = winsorize(df[col], limits=[0.05, 0.2])
         return df
 
     # ===============================================================
@@ -246,7 +246,7 @@ class DataPreprocessor:
         print(df_train.columns[:10])
 
         # STEP 6 - Selezione top feature
-        df_train = self._select_top_features(df_train)
+        df_train = self._select_top_features(df_train, corr_threshold=0.18)
 
         print("\n➡️ Dopo selezione feature:")
         print(df_train.shape)

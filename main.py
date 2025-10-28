@@ -50,11 +50,11 @@ if __name__ == "__main__":
         print("\n🔄 Avvio Cross-Validation a 5 fold...")
         kf = KFold(n_splits=5, shuffle=True, random_state=42)
         cv_scores = {"RMSE": [], "MAE": [], "R²": []}
-
+#
         for fold, (train_idx, val_idx) in enumerate(kf.split(X_train), 1):
             X_tr, X_val = X_train.iloc[train_idx], X_train.iloc[val_idx]
             y_tr, y_val = y_train.iloc[train_idx], y_train.iloc[val_idx]
-            
+
             ols_cv = OLSRegressor()
             ols_cv.fit(X_tr, y_tr)
             y_pred_val = ols_cv.predict(X_val)
@@ -62,16 +62,20 @@ if __name__ == "__main__":
             for key in cv_scores:
                 cv_scores[key].append(metrics[key])
             print(f"  Fold {fold} → RMSE: {metrics['RMSE']:.6f}, R²: {metrics['R²']:.4f}")
-
+#
         print("\n📊 METRICHE MEDIE (CV 5-fold, scala log):")
         for metric, values in cv_scores.items():
             mean_val = np.mean(values)
             std_val = np.std(values)
             print(f"  {metric}: {mean_val:.6f} ± {std_val:.6f}")
-
+#
         # Modello finale su TUTTO il train
+        ModelEvaluator.plot_residuals(y_val, y_pred_val)
+        ModelEvaluator.plot_predictions(y_val, y_pred_val)
+
         final_model = OLSRegressor()
         final_model.fit(X_train, y_train)
+
 
     else:
         print("\n✂️ Utilizzo split semplice (80/20)...")
@@ -92,6 +96,7 @@ if __name__ == "__main__":
         ModelEvaluator.plot_predictions(y_val, y_pred_val)
 
         final_model = ols_model
+
 
     # ===========================================================
     # STEP 5 - SUBMISSION FINALE

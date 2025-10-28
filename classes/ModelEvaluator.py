@@ -1,9 +1,11 @@
 # evaluator.py
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
+from classes.OLSRegressor import OLSRegressor
+
+
 
 class ModelEvaluator:
     """
@@ -28,7 +30,7 @@ class ModelEvaluator:
         residuals = y_true - y_pred
 
         fig, axes = plt.subplots(1, 2, figsize=figsize)
-        
+
         # Residui vs Predizioni
         axes[0].scatter(y_pred, residuals, alpha=0.6)
         axes[0].axhline(0, color='red', linestyle='--')
@@ -54,3 +56,4 @@ class ModelEvaluator:
         plt.ylabel("Predizioni (log)")
         plt.title("Predizioni vs Reali")
         plt.show()
+

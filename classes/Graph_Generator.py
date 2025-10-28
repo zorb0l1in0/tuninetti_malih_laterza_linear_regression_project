@@ -12,6 +12,7 @@ class GraphGenerator:
         self.df = df
         self.has_target = 'SalePrice' in df.columns
 
+
     def target_distribution(self, log_transform=False):
         """Mostra la distribuzione del target (se presente)."""
         if not self.has_target:
