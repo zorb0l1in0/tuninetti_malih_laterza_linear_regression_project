@@ -57,3 +57,5 @@ class ModelEvaluator:
         plt.title("Predizioni vs Reali")
         plt.show()
 
+
+

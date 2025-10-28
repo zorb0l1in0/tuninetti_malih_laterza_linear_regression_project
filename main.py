@@ -76,6 +76,10 @@ if __name__ == "__main__":
         final_model = OLSRegressor()
         final_model.fit(X_train, y_train)
 
+        # Grafico sulla curva di apprendimento (usa GraphGenerator)
+        print("\n📈 Curva di apprendimento...")
+        graphGenComp.learning_curve_plot(X_train, y_train, cv=5)
+
 
     else:
         print("\n✂️ Utilizzo split semplice (80/20)...")
