@@ -48,3 +48,43 @@ if __name__ == "__main__":
     X_train, X_test, y_train = pre.prepare(df_train, df_test)
 
     model = pre.check_BLUE_assumptions()
+
+    # ===========================================================
+    # STEP 3 - ADDESTRAMENTO MODELLO E VALUTAZIONE (aggiunto in fondo)
+    # ===========================================================
+    from sklearn.model_selection import train_test_split
+    from classes.OLSRegressor import OLSRegressor
+    from classes.ModelEvaluator import ModelEvaluator
+    import numpy as np
+
+    # Split del train in train + validation (per valutazione)
+    X_train_split, X_val, y_train_split, y_val = train_test_split(
+        X_train, y_train, test_size=0.2, random_state=42
+    )
+
+    # Addestra il modello OLS
+    ols_model = OLSRegressor()
+    ols_model.fit(X_train_split, y_train_split)
+
+    # Valutazione sul validation set
+    y_pred_val = ols_model.predict(X_val)
+    metrics = ModelEvaluator.compute_metrics(y_val, y_pred_val)
+    print("\n📊 METRICHE SUL VALIDATION SET (scala log):")
+    for metric, value in metrics.items():
+        print(f"  {metric}: {value:.6f}")
+
+    # (Opzionale) Plot residui e predizioni
+    # ModelEvaluator.plot_residuals(y_val, y_pred_val)
+    # ModelEvaluator.plot_predictions(y_val, y_pred_val)
+
+    # Predizione su test set (per submission)
+    log_preds_test = ols_model.predict(X_test)
+    saleprice_preds = np.expm1(log_preds_test)  # Inversa del log → scala originale
+
+    # Crea submission
+    submission = pd.DataFrame({
+        "Id": df_test["Id"],
+        "SalePrice": saleprice_preds
+    })
+    submission.to_csv("submission.csv", index=False)
+    print("\n✅ File 'submission.csv' generato con successo!")
