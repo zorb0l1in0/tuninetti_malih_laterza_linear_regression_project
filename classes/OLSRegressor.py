@@ -22,6 +22,7 @@ class OLSRegressor:
         """
         X = X.copy()
         X_with_const = sm.add_constant(X)
+        print("Addestramento modello OLS")
         self.model = sm.OLS(y, X_with_const).fit()
         self.is_fitted = True
         self.feature_names_ = X.columns.tolist()
@@ -45,6 +46,7 @@ class OLSRegressor:
                 X_with_const[col] = 0  # imputa 0 per feature assenti (es. da one-hot)
         X_aligned = X_with_const[required_cols]
 
+        print("Predizione logaritmo dei prezzi con modello OLS")
         return self.model.predict(X_aligned).values
 
     def get_summary(self):

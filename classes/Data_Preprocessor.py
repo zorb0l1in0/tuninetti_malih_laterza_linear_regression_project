@@ -193,7 +193,7 @@ class DataPreprocessor:
         return model
 
     # ===============================================================
-    # PIPELINE PRINCIPALE — ora accetta train e test
+    # PIPELINE PRINCIPALE
     # ===============================================================
     def prepare(self, df_train, df_test):
         df_train = df_train.copy()

@@ -1,9 +1,11 @@
 from classes.Kaggle_loader import KaggleLoader
 from classes.Data_Preprocessor import DataPreprocessor
 from classes.Graph_Generator import GraphGenerator
-import seaborn as sns
 import pandas as pd
-import numpy as np  # 👈 aggiunto per la trasformazione log
+from sklearn.model_selection import train_test_split
+from classes.OLSRegressor import OLSRegressor
+from classes.ModelEvaluator import ModelEvaluator
+import numpy as np
 
 pd.set_option('display.max_rows', None)
 pd.set_option('display.max_columns', None)
@@ -62,10 +64,7 @@ if __name__ == "__main__":
     # ===========================================================
     # STEP 3 - ADDESTRAMENTO MODELLO E VALUTAZIONE (aggiunto in fondo)
     # ===========================================================
-    from sklearn.model_selection import train_test_split
-    from classes.OLSRegressor import OLSRegressor
-    from classes.ModelEvaluator import ModelEvaluator
-    import numpy as np
+
 
     # Split del train in train + validation (per valutazione)
     X_train_split, X_val, y_train_split, y_val = train_test_split(
@@ -84,8 +83,8 @@ if __name__ == "__main__":
         print(f"  {metric}: {value:.6f}")
 
     # (Opzionale) Plot residui e predizioni
-    # ModelEvaluator.plot_residuals(y_val, y_pred_val)
-    # ModelEvaluator.plot_predictions(y_val, y_pred_val)
+    ModelEvaluator.plot_residuals(y_val, y_pred_val)
+    ModelEvaluator.plot_predictions(y_val, y_pred_val)
 
     # Predizione su test set (per submission)
     log_preds_test = ols_model.predict(X_test)
@@ -96,5 +95,6 @@ if __name__ == "__main__":
         "Id": df_test["Id"],
         "SalePrice": saleprice_preds
     })
-    submission.to_csv("submission.csv", index=False)
+
+    submission.to_csv("generated_submission.csv", index=False)
     print("\n✅ File 'submission.csv' generato con successo!")
