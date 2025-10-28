@@ -3,6 +3,7 @@ from classes.Data_Preprocessor import DataPreprocessor
 from classes.Graph_Generator import GraphGenerator
 import seaborn as sns
 import pandas as pd
+import numpy as np  # 👈 aggiunto per la trasformazione log
 
 pd.set_option('display.max_rows', None)
 pd.set_option('display.max_columns', None)
@@ -14,8 +15,8 @@ if __name__ == "__main__":
     #########  STEP 1 - Caricamento dataset housing prices + stampa info descrittive/statistiche
     loader = KaggleLoader("competitions/house-prices-advanced-regression-techniques", "./house_prices_data")
 
-    #Decommentare se non si ha il dataset in locale e serve scaricarselo
-    #loader.load()
+    # Decommentare se non si ha il dataset in locale e serve scaricarselo
+    # loader.load()
 
     # Stampa informazioni sul dataset
     loader.print_information()
@@ -26,8 +27,16 @@ if __name__ == "__main__":
     # Istanzia la classe GraphGenerator
     graphGenComp = GraphGenerator(df_train)
 
-    # Osservazione iniziale della distribuzione del target 'SalePrice'
-    target_distribution_graph = graphGenComp.target_distribution()
+    # 1️⃣ Osservazione iniziale della distribuzione del target 'SalePrice'
+    print("\n📊 Distribuzione originale del target:")
+    graphGenComp.target_distribution(log_transform=False)
+
+    # 2️⃣ Visualizzazione della distribuzione log-trasformata del target
+    print("\n📊 Distribuzione log-trasformata del target:")
+    df_log = df_train.copy()
+    df_log["SalePrice"] = np.log(df_log["SalePrice"])
+    graph_log = GraphGenerator(df_log)
+    graph_log.target_distribution(log_transform=False)
 
     # NOTA IMPORTANTE: bisognerebbe osservare anche la distribuzione delle variabili numeriche continue in relazione
     # al target + eventuali altri grafici esplorativi
@@ -47,4 +56,5 @@ if __name__ == "__main__":
 
     X_train, X_test, y_train = pre.prepare(df_train, df_test)
 
-    model = pre.check_BLUE_assumptions()
+    ######### STEP 3 - Verifica ipotesi BLUE
+    pre.check_BLUE_assumptions()

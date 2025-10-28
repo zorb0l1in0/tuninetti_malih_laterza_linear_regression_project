@@ -42,6 +42,12 @@ class DataPreprocessor:
             df[col] = df[col].fillna(df[col].median())
         for col in cat_cols:
             df[col] = df[col].fillna(df[col].mode()[0])
+
+        # DEBUG: verifica se ci sono ancora missing
+        missing_after = df.isnull().sum().sum()
+        if missing_after > 0:
+            print(f"⚠️ Attenzione: ci sono ancora {missing_after} valori mancanti dopo l'imputazione.")
+
         return df
 
     # ===============================================================
@@ -109,7 +115,7 @@ class DataPreprocessor:
     # ===============================================================
     # STEP 6 - Selezione top feature correlate col target
     # ===============================================================
-    def _select_top_features(self, df, corr_threshold=0.6):
+    def _select_top_features(self, df, corr_threshold=0.18):
         '''
         Seleziona le feature con correlazione (assoluta) superiore alla soglia specificata
         rispetto al target. La correlazione è calcolata con Pearson.
@@ -132,12 +138,12 @@ class DataPreprocessor:
         selected_features = corr_sorted[abs(corr_sorted) > corr_threshold].index.tolist()
 
         # 🔹 5️⃣ Stampa riepilogo ordinato con valori di correlazione
-        print(f"\n📊 Lista delle feature ordinate per correlazione con '{self.target}':")
-        print("--------------------------------------------------------")
-        for feat, val in corr_sorted.items():
-            mark = "✅" if abs(val) > corr_threshold else "–"
-            print(f"{mark} {feat:<25} →  r = {val:>6.3f}")
-        print("--------------------------------------------------------")
+        #print(f"\n📊 Lista delle feature ordinate per correlazione con '{self.target}':")
+        #print("--------------------------------------------------------")
+        #for feat, val in corr_sorted.items():
+        #    mark = "✅" if abs(val) > corr_threshold else "–"
+        #    print(f"{mark} {feat:<25} →  r = {val:>6.3f}")
+        #print("--------------------------------------------------------")
 
         # 🔹 6️⃣ Mostra solo le feature che superano la soglia
         if selected_features:
@@ -209,6 +215,11 @@ class DataPreprocessor:
         print(df_train.shape)
         print(df_train.columns[:10])  # solo le prime 10 per leggibilità
 
+        #### test su correlazioni prima di procedere
+        #print("\n=== DEBUG: Correlazioni iniziali ===")
+        #self._select_top_features(df_train)
+
+
         # STEP 2 - Trasformazione log del target
         df_train = self._transform_target(df_train)
 
@@ -235,7 +246,7 @@ class DataPreprocessor:
         print(df_train.columns[:10])
 
         # STEP 6 - Selezione top feature
-        df_train = self._select_top_features(df_train, corr_threshold=0.6)
+        df_train = self._select_top_features(df_train)
 
         print("\n➡️ Dopo selezione feature:")
         print(df_train.shape)
@@ -260,6 +271,10 @@ class DataPreprocessor:
         print("\n✅ Fine preprocessing")
         print("Train finale:", X_train_scaled.shape)
         print("Test finale:", X_test_scaled.shape)
+
+        self.X_train = X_train_scaled
+        self.y_train = y_train
+        self.X_test = X_test_scaled
 
         return X_train_scaled, X_test_scaled, y_train
 
