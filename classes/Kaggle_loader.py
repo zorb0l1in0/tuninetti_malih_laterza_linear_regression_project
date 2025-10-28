@@ -3,6 +3,7 @@ import zipfile
 from kaggle.api.kaggle_api_extended import KaggleApi
 import pandas as pd
 
+
 class KaggleLoader:
     def __init__(self, dataset: str, download_dir: str = "./data"):
         """
@@ -55,7 +56,7 @@ class KaggleLoader:
 
         # Carica i dataset
         df_train = pd.read_csv(train_path)
-        df_test = pd.read_csv(test_path)
+        #df_test = pd.read_csv(test_path)
 
         # --- TRAIN ---
         print("\n=== 🔹 TRAIN.CSV ===")
@@ -64,27 +65,28 @@ class KaggleLoader:
         print(df_train.head())
         print("\n📊 Statistiche descrittive:")
         print(df_train.describe(include='all'))
+        print(f"\n\n Tipi di dati per colonna: \n{df_train.dtypes}")
+        print(f"\n\n Valori nulli per colonna: \n{df_train.isnull().sum()}")
 
-        # --- TEST ---
-        print("\n=== 🔸 TEST.CSV ===")
-        print(f"Dimensioni: {df_test.shape[0]} righe × {df_test.shape[1]} colonne")
-        print("\n📄 Prime righe:")
-        print(df_test.head())
-        print("\n📊 Statistiche descrittive:")
-        print(df_test.describe(include='all'))
+
+        ## --- TEST ---
+        #print("\n=== 🔸 TEST.CSV ===")
+        #print(f"Dimensioni: {df_test.shape[0]} righe × {df_test.shape[1]} colonne")
+        #print("\n📄 Prime righe:")
+        #print(df_test.head())
+        #print("\n📊 Statistiche descrittive:")
+        #print(df_test.describe(include='all'))
 
     def get_full_dataset(self):
-        # Percorsi assoluti dei due file attesi
+        # Percorso assolutoi del file train.csv
         train_path = os.path.join(self.download_dir, "train.csv")
         test_path = os.path.join(self.download_dir, "test.csv")
 
         df_train = pd.read_csv(train_path)
         df_test = pd.read_csv(test_path)
 
-        df = pd.concat([df_train, df_test], axis=0, ignore_index=True)
-
-        print(df.shape)
-        return df
+        print(df_train.shape)
+        return df_train, df_test
 
 
 
