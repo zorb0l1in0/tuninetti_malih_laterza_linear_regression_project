@@ -32,51 +32,6 @@ class GraphGenerator:
         plt.ylabel("Frequenza")
         print(plt.show())
 
-    def correlation_matrix(self):
-        """Mostra la heatmap di correlazione solo per le colonne numeriche."""
-        numeric_df = self.df.select_dtypes(include=[np.number])
-        corr = numeric_df.corr()
-        plt.figure(figsize=(12,10))
-        sns.heatmap(corr, cmap="coolwarm", annot=False)
-        plt.title("Matrice di correlazione (solo variabili numeriche)")
-        plt.show()
-
-    def scatter_feature(self, feature):
-        """Scatterplot tra una feature numerica e SalePrice."""
-        if not self.has_target:
-            print("⚠️ Non puoi creare scatter plot: manca 'SalePrice'.")
-            return
-        if feature not in self.df.columns:
-            print(f"⚠️ Colonna '{feature}' non trovata.")
-            return
-
-        sns.scatterplot(x=feature, y='SalePrice', data=self.df, alpha=0.6)
-        plt.title(f"{feature} vs SalePrice")
-        plt.show()
-
-    def boxplot_feature(self, feature):
-        """Boxplot di una feature categorica rispetto a SalePrice."""
-        if not self.has_target:
-            print("⚠️ Non puoi creare boxplot: manca 'SalePrice'.")
-            return
-        if feature not in self.df.columns:
-            print(f"⚠️ Colonna '{feature}' non trovata.")
-            return
-
-        sns.boxplot(x=feature, y='SalePrice', data=self.df)
-        plt.title(f"{feature} vs SalePrice")
-        plt.xticks(rotation=45)
-        plt.show()
-
-    def outlier_check(self):
-        """Boxplot per controllare gli outlier di SalePrice."""
-        if not self.has_target:
-            print("⚠️ Nessuna colonna 'SalePrice' trovata nel dataset.")
-            return
-
-        sns.boxplot(x=self.df['SalePrice'])
-        plt.title("Outlier di SalePrice")
-        plt.show()
 
     def learning_curve_plot(self, X, y, cv=5, scoring='neg_root_mean_squared_error', random_state=42):
         """
