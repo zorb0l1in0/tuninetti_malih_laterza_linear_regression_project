@@ -16,7 +16,7 @@ L'obiettivo è prevedere il prezzo di vendita delle case utilizzando un approcci
   - Imputazione intelligente di valori mancanti
   - Trasformazione logaritmica del target
   - Winsorizzazione degli outlier
-  - One-hot encoding di variabili categoriche
+  - Encoding di variabili categoriche
   - Rimozione feature con VIF > 5
   - Selezione feature per correlazione con il target
   - Scaling con `StandardScaler`
