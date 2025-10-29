@@ -34,21 +34,24 @@ L'obiettivo è prevedere il prezzo di vendita delle case utilizzando un approcci
 
 ## 📂 Struttura del progetto
 
-├── house_prices_data/ # Dati scaricati da Kaggle (train.csv, test.csv, ecc.)
-    ├── main.py # Script principale (eseguibile)
-    ├── README.md # Questo file
-    ├── requirements.txt # Dipendenze Python
-    ├── generated_submission.csv # Output: submission per Kaggle
-
+```
+house_prices/
+├── house_prices_data/              # Dati scaricati da Kaggle
+│   ├── train.csv
+│   ├── test.csv
+│   └── ...
 ├── classes/
-    ├── init.py
-    ├── Kaggle_loader.py # Download e caricamento dataset
-    ├── Data_Preprocessor.py # Pipeline completa di preprocessing
-    ├── Graph_Generator.py # Grafici esplorativi e diagnostici
-    ├── OLSRegressor.py # Modello OLS con statsmodels
-    └── ModelEvaluator.py # Metriche e grafici di valutazione
-
-
+│   ├── __init__.py
+│   ├── Kaggle_loader.py            # Download e caricamento dataset
+│   ├── Data_Preprocessor.py        # Pipeline completa di preprocessing
+│   ├── Graph_Generator.py          # Grafici esplorativi e diagnostici
+│   ├── OLSRegressor.py             # Modello OLS con statsmodels
+│   └── ModelEvaluator.py           # Metriche e grafici di valutazione
+├── main.py                         # Script principale (eseguibile)
+├── README.md                       # Documentazione
+├── requirements.txt                # Dipendenze Python
+└── generated_submission.csv        # Output: submission per Kaggle
+```
 ---
 
 ## ⚙️ Installazione
