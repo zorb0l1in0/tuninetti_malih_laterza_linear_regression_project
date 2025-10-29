@@ -65,6 +65,8 @@ class KaggleLoader:
         print(df_train.head())
         print("\n📊 Statistiche descrittive:")
         print(df_train.describe(include='all'))
+        #Conteggio di tipologie di variabili
+        print(f"\n\n Ci sono {df_train.select_dtypes(include=['object']).shape[1]} variabili categoriche, {df_train.select_dtypes(include=['number']).shape[1]} variabili numeriche, {df_train.select_dtypes(include=['bool']).shape[1]} variabili boleane.")
         print(f"\n\n Tipi di dati per colonna: \n{df_train.dtypes}")
         print(f"\n\n Valori nulli per colonna: \n{df_train.isnull().sum()}")
 

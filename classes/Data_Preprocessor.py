@@ -80,18 +80,69 @@ class DataPreprocessor:
     # ===============================================================
     # STEP 4 - Encoding categoriche + bool
     # ===============================================================
+
     def _encode_categoricals(self, df):
         '''
-        Applichiamo il one-hot encoding alle variabili categoriche e convertiamo i booleani in interi 0 e 1
+        Applica codifiche appropriate:
+        - Label encoding per variabili ordinali (con ordine logico)
+        - One-Hot encoding per variabili nominali
+        - Conversione dei booleani in 0/1
         '''
         print("\n🔄 Encoding variabili categoriche e booleani...")
-        df_encoded = pd.get_dummies(df, drop_first=True, dtype=int)
 
-        bool_cols = df_encoded.select_dtypes(include=["bool"]).columns
-        if len(bool_cols) > 0:
-            df_encoded[bool_cols] = df_encoded[bool_cols].astype(int)
+        df = df.copy()
 
+        # ==============================================================
+        # 1️⃣ MAPPATURE PER VARIABILI ORDINALI
+        # ==============================================================
+        ordinal_mappings = {
+            "ExterQual": {"Po": 1, "Fa": 2, "TA": 3, "Gd": 4, "Ex": 5},
+            "ExterCond": {"Po": 1, "Fa": 2, "TA": 3, "Gd": 4, "Ex": 5},
+            "BsmtQual": {"NA": 0, "Po": 1, "Fa": 2, "TA": 3, "Gd": 4, "Ex": 5},
+            "BsmtCond": {"NA": 0, "Po": 1, "Fa": 2, "TA": 3, "Gd": 4, "Ex": 5},
+            "BsmtExposure": {"NA": 0, "No": 1, "Mn": 2, "Av": 3, "Gd": 4},
+            "BsmtFinType1": {"NA": 0, "Unf": 1, "LwQ": 2, "Rec": 3, "BLQ": 4, "ALQ": 5, "GLQ": 6},
+            "BsmtFinType2": {"NA": 0, "Unf": 1, "LwQ": 2, "Rec": 3, "BLQ": 4, "ALQ": 5, "GLQ": 6},
+            "HeatingQC": {"Po": 1, "Fa": 2, "TA": 3, "Gd": 4, "Ex": 5},
+            "KitchenQual": {"Po": 1, "Fa": 2, "TA": 3, "Gd": 4, "Ex": 5},
+            "FireplaceQu": {"NA": 0, "Po": 1, "Fa": 2, "TA": 3, "Gd": 4, "Ex": 5},
+            "GarageQual": {"NA": 0, "Po": 1, "Fa": 2, "TA": 3, "Gd": 4, "Ex": 5},
+            "GarageCond": {"NA": 0, "Po": 1, "Fa": 2, "TA": 3, "Gd": 4, "Ex": 5},
+            "GarageFinish": {"NA": 0, "Unf": 1, "RFn": 2, "Fin": 3},
+            "PavedDrive": {"N": 0, "P": 1, "Y": 2},
+            "PoolQC": {"NA": 0, "Fa": 1, "TA": 2, "Gd": 3, "Ex": 4},
+            "Fence": {"NA": 0, "MnWw": 1, "GdWo": 2, "MnPrv": 3, "GdPrv": 4},
+            "Functional": {"Sal": 1, "Sev": 2, "Maj2": 3, "Maj1": 4, "Mod": 5, "Min2": 6, "Min1": 7, "Typ": 8}
+        }
+
+        for col, mapping in ordinal_mappings.items():
+            if col in df.columns:
+                df[col] = df[col].map(mapping).astype(float)
+
+        # ==============================================================
+        # 2️⃣ BOOLEANI (es. CentralAir)
+        # ==============================================================
+        bool_like = ["CentralAir"]
+        for col in bool_like:
+            if col in df.columns:
+                df[col] = df[col].map({"N": 0, "Y": 1})
+
+        # ==============================================================
+        # 3️⃣ VARIABILI CATEGORICHE NOMINALI → ONE-HOT
+        # ==============================================================
+        # Escludiamo dall'OHE le variabili già mappate
+        already_encoded = list(ordinal_mappings.keys()) + bool_like
+        cat_cols = df.select_dtypes(include=["object"]).columns.difference(already_encoded)
+
+        df_encoded = pd.get_dummies(df, columns=cat_cols, drop_first=True, dtype=int)
+
+        # ==============================================================
+        # 4️⃣ Conversione finale e riempimento NaN
+        # ==============================================================
         df_encoded = df_encoded.apply(pd.to_numeric, errors="coerce").fillna(0)
+
+        print("✅ Encoding completato. Variabili trasformate:", len(cat_cols), "nominali +", len(ordinal_mappings),
+              "ordinali.")
         return df_encoded
 
     # ===============================================================
